@@ -1,0 +1,7 @@
+{
+  "name": "zhihu-outils",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
