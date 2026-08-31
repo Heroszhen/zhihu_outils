@@ -1,0 +1,150 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>zhihu</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div id="container" class="ion-padding-top">
+    <ion-segment [value]="Section.AUTHORS" (ionChange)="onSegmentChange($event)">
+      <ion-segment-button [value]="Section.AUTHORS" [contentId]="Section.AUTHORS">
+        <ion-label>Auteurs</ion-label>
+      </ion-segment-button>
+      <ion-segment-button [value]="Section.ARTICLES" [contentId]="Section.ARTICLES">
+        <ion-label>Articles</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    <ion-segment-view>
+      <ion-segment-content [id]="Section.AUTHORS">First</ion-segment-content>
+      <ion-segment-content [id]="Section.ARTICLES">Second</ion-segment-content>
+    </ion-segment-view>
+  </div>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="chevron-up-circle"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="toggleForm()">
+        <ion-icon name="duplicate-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
+  <ion-modal [isOpen]="isModalOpen">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>
+            @if (elmIndex === null) {
+              Ajouter
+            } @else {
+              Modifier
+            }
+
+            @if (selectedSection === Section.AUTHORS) {
+                un auteur
+            } @else {
+                un article
+            }
+          </ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="setOpen(false)">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        @if (selectedSection === Section.AUTHORS && authorM !== null) {
+          <form #authorForm="ngForm">
+            <ion-list>
+              <ion-item>
+                <ion-input 
+                  label="Nom" 
+                  placeholder="nom"
+                  id="name"
+                  name="name"
+                  #name="ngModel"
+                  [(ngModel)]="authorM['name']"
+                  required
+                  minLength="3"
+                  maxLength="50"
+                ></ion-input>
+                @if (name.invalid && (name.dirty || name.touched)) {
+                  <ion-text color="danger">
+                    @if (name.errors?.["required"]) {
+                      Le champ est obligatoire
+                    }
+
+                    @if (name.errors?.["minlength"]) {
+                      Au moins 2 caractères
+                    }
+
+                    @if (name.errors?.["maxlength"]) {
+                      50 caractères au max
+                    }
+                  </ion-text>
+                }
+              </ion-item>
+              <ion-item>
+                <ion-textarea 
+                  label="Lien" 
+                  placeholder="lien" 
+                  [autoGrow]="true"
+                  id="link"
+                  name="link"
+                  #link="ngModel"
+                  [(ngModel)]="authorM['link']"
+                  required
+                  minLength="5"
+                  pattern="^https?://.*"
+                ></ion-textarea>
+                @if (link.invalid && (link.dirty || link.touched)) {
+                  <ion-text color="danger">
+                    @if (link.errors?.["required"]) {
+                      Le champ est obligatoire
+                    }
+
+                    @if (link.errors?.["minlength"]) {
+                      Au moins 5 caractères
+                    }
+
+                    @if (link.errors?.["pattern"]) {
+                      Le lien n'est pas valide
+                    }
+                  </ion-text>
+                }
+              </ion-item>
+              <ion-item>
+                <div>
+                  <div class="ion-display-flex ion-align-items-center">
+                    <label class="ion-padding-end" for="photo">Photo</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      (change)="handlePhoto($event)"
+                      id="photo"
+                    />
+                  </div>
+                  @if (authorM.photo) {
+                    <div class="ion-margin-top">
+                      <img
+                        src="{{authorM.photo}}"
+                        alt=""
+                      />
+                    </div>
+                  }
+                </div>
+              </ion-item>
+            </ion-list>
+            <ion-button expand="block" [disabled]="authorForm.invalid || !authorM.photo" (click)="saveForm()">
+              Envoyer
+            </ion-button>
+          </form>
+        }
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

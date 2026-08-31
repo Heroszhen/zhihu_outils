@@ -3,13 +3,21 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'folder',
     redirectTo: 'folder/Inbox',
     pathMatch: 'full'
   },
   {
     path: 'folder/:folder',
     loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
+  },
+  {
+    path: '',
+    loadChildren: () => import('./components/zhihu/zhihu.module').then( m => m.ZhihuPageModule)
+  },
+  {
+    path: 'zhihu',
+    loadChildren: () => import('./components/zhihu/zhihu.module').then( m => m.ZhihuPageModule)
   }
 ];
 

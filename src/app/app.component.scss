@@ -117,3 +117,13 @@ ion-note {
 ion-item.selected {
   --color: var(--ion-color-primary);
 }
+
+ion-menu[contentid="main-content"] {
+  ion-item {
+    ion-img[slot="start"] {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+  }
+}
