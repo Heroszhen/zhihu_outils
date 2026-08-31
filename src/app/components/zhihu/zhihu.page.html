@@ -18,7 +18,28 @@
       </ion-segment-button>
     </ion-segment>
     <ion-segment-view>
-      <ion-segment-content [id]="Section.AUTHORS">First</ion-segment-content>
+      <ion-segment-content [id]="Section.AUTHORS">
+        <ion-list>
+          @for (item of authors; track item; let i = $index) {
+            <ion-item-sliding>
+              <ion-item>
+                <ion-avatar aria-hidden="true" slot="start">
+                  <img alt="" src="{{item.photo}}" />
+                </ion-avatar>
+                <ion-label>{{item.name}}</ion-label>
+              </ion-item>
+          
+              <ion-item-options>
+                <ion-item-option color="success" class="text-white" (click)="toggleForm(i)">Modifier</ion-item-option>
+                <ion-item-option color="tertiary" class="ion-padding" (click)="goToWebSite(i)">
+                  <ion-icon name="arrow-up-right-box-outline"></ion-icon>
+                </ion-item-option>
+                <ion-item-option color="danger">Supprimer</ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+          }
+        </ion-list>
+      </ion-segment-content>
       <ion-segment-content [id]="Section.ARTICLES">Second</ion-segment-content>
     </ion-segment-view>
   </div>
@@ -118,7 +139,7 @@
                 }
               </ion-item>
               <ion-item>
-                <div>
+                <div class="mt-2">
                   <div class="ion-display-flex ion-align-items-center">
                     <label class="ion-padding-end" for="photo">Photo</label>
                     <input
@@ -129,7 +150,7 @@
                     />
                   </div>
                   @if (authorM.photo) {
-                    <div class="ion-margin-top">
+                    <div class="ion-margin-top ion-margin-bottom">
                       <img
                         src="{{authorM.photo}}"
                         alt=""

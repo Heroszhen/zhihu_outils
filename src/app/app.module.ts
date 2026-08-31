@@ -15,7 +15,7 @@ const dbConfig: DBConfig = {
   version: 1,
   objectStoresMeta: [
     {
-      store: "zhi_hu_article",
+      store: "zhi_hu_author",
       storeConfig: { keyPath: "id", autoIncrement: true },
       storeSchema: [],
     },

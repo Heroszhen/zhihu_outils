@@ -1,5 +1,6 @@
 export abstract class Model {
-    assignData(data: object): void {
-      Object.assign(this, data);
-    }
+  id?:string;
+  assignData(data: object): void {
+    Object.assign(this, data);
+  }
 }

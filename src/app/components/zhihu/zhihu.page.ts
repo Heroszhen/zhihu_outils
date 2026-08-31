@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from "@angular/forms";
 import { ZhiHuAuthor } from '../../models/ZhiHuAuthor';
 import { readFile } from '../../services/utilService';
+import { NgxIndexedDBService } from 'ngx-indexed-db';
+import { ZhiHuArticle } from '../../models/ZhiHuArticle';
+import { forkJoin, lastValueFrom } from 'rxjs';
+import { ToastController } from '@ionic/angular/lazy';
 
 enum Section {
   AUTHORS = "authors",
@@ -20,10 +24,33 @@ export class ZhihuPage implements OnInit {
   elmIndex:number|null = null;
   isModalOpen = false;
   authorM: ZhiHuAuthor|null = null;
+  authors: ZhiHuAuthor[] = [];
+  articles: ZhiHuArticle[] = [];
 
-  constructor() { }
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private dbService: NgxIndexedDBService,
+    private toastController: ToastController
+  ) { }
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter() {
+    this.getData();
+  }
+
+  getData() {
+    forkJoin({
+      authors: this.dbService.getAll<ZhiHuAuthor>(ZhiHuAuthor.tableName),
+      articles: this.dbService.getAll<ZhiHuArticle>(ZhiHuArticle.tableName),
+    }).subscribe({
+      next: (result) => {
+        this.authors = result.authors;
+        this.articles = result.articles;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   onSegmentChange(event: CustomEvent) {
@@ -39,6 +66,9 @@ export class ZhihuPage implements OnInit {
     switch(this.selectedSection) {
       case Section.AUTHORS:
         this.authorM = new ZhiHuAuthor();
+        if (index !== null) {
+          this.authorM.assignData(this.authors[index]);
+        }
         break;
       case Section.ARTICLES:
         break;  
@@ -58,12 +88,56 @@ export class ZhihuPage implements OnInit {
 
     switch(this.selectedSection) {
       case Section.AUTHORS:
-        if (this.authorM) this.authorM.photo = url;
+        if (this.authorM) {
+          this.authorM.photo = url;
+          
+        }
         break;
-    }console.log(this.authorM)
+    }
+    this.cdr.detectChanges(); 
   }
   
-  saveForm() {
-    console.log(this.authorM)
+  async saveForm() {
+    switch(this.selectedSection) {
+      case Section.AUTHORS:
+        await this.editAuthor();
+        break;
+      case Section.ARTICLES:
+        break;
+    }
+  }
+
+  async editAuthor() {
+    if (!this.authorM) return;
+    try {
+      if (this.elmIndex === null) {
+        const result = await lastValueFrom(this.dbService.add<ZhiHuAuthor>(ZhiHuAuthor.tableName, this.authorM));
+        this.authors.push(result);
+        this.setOpen(false);
+        this.cdr.detectChanges(); 
+      } else {
+        this.authors[this.elmIndex] = await lastValueFrom(
+          this.dbService.update<ZhiHuAuthor>(ZhiHuAuthor.tableName, this.authorM),
+        );
+      }
+
+      const toast = await this.toastController.create({
+        message: 'Enregistré!',
+        duration: 1000,
+        position: 'bottom',
+      });
+  
+      await toast.present();
+    } catch {}
+  }
+
+  goToWebSite(index:number) {
+    let url = null;
+    switch(this.selectedSection) {
+      case Section.AUTHORS:
+        url = this.authors[index].link;
+        break;
+    }
+    if (url) window.open(url, '_blank', 'noopener,noreferrer');
   }
 }
