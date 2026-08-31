@@ -5,7 +5,7 @@ import { readFile } from '../../services/utilService';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { ZhiHuArticle } from '../../models/ZhiHuArticle';
 import { forkJoin, lastValueFrom } from 'rxjs';
-import { ToastController } from '@ionic/angular/lazy';
+import { AlertController, ToastController } from '@ionic/angular/lazy';
 
 enum Section {
   AUTHORS = "authors",
@@ -30,7 +30,8 @@ export class ZhihuPage implements OnInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private dbService: NgxIndexedDBService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private alertController: AlertController
   ) { }
 
   ngOnInit() {
@@ -139,5 +140,37 @@ export class ZhihuPage implements OnInit {
         break;
     }
     if (url) window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
+  async openDeleteModal(index:number) {
+    const alert = await this.alertController.create({
+      header: 'Supprimer ?',
+      buttons:  [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'OK',
+          role: 'confirm',
+          handler: () => {
+            this.deleteElm(index)
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+    
+  }
+
+  async deleteElm(index:number) {
+    switch(this.selectedSection) {
+      case Section.AUTHORS:
+        await lastValueFrom(this.dbService.delete<ZhiHuAuthor>(ZhiHuAuthor.tableName, this.authors[index].id ?? 0));
+        this.authors= this.authors.filter((_, elmIndex: number) => elmIndex !== index);
+        break;
+    }
+    this.cdr.detectChanges();
   }
 }
