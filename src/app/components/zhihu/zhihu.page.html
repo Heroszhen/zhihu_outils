@@ -17,7 +17,7 @@
         <ion-label>Articles</ion-label>
       </ion-segment-button>
     </ion-segment>
-    <ion-segment-view>
+    <ion-segment-view class="ion-padding-top">
       <ion-segment-content [id]="Section.AUTHORS">
         <ion-list>
           @for (item of authors; track item; let i = $index) {
@@ -138,28 +138,24 @@
                   </ion-text>
                 }
               </ion-item>
-              <ion-item>
-                <div class="mt-2">
-                  <div class="ion-display-flex ion-align-items-center">
-                    <label class="ion-padding-end" for="photo">Photo</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      (change)="handlePhoto($event)"
-                      id="photo"
-                    />
-                  </div>
-                  @if (authorM.photo) {
-                    <div class="ion-margin-top ion-margin-bottom">
-                      <img
-                        src="{{authorM.photo}}"
-                        alt=""
-                      />
-                    </div>
-                  }
-                </div>
+              <ion-item class="ion-display-flex ion-align-items-center">
+                <label class="ion-padding-end" for="photo">Photo</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  (change)="handlePhoto($event)"
+                  id="photo"
+                />
               </ion-item>
             </ion-list>
+            @if (authorM.photo) {
+              <div class="ion-margin-top ion-margin-bottom">
+                <img
+                  src="{{authorM.photo}}"
+                  alt=""
+                />
+              </div>
+            }
             <ion-button expand="block" [disabled]="authorForm.invalid || !authorM.photo" (click)="saveForm()">
               Envoyer
             </ion-button>
