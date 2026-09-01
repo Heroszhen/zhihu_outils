@@ -1,0 +1,23 @@
+{
+    "name": "zhi",
+    "short_name": "zhi",
+    "theme_color": "#006fff",
+    "background_color": "#006fff",
+    "display": "standalone",
+    "scope": "./",
+    "start_url": "./",
+    "icons": [
+      {
+        "src": "assets/pwa/zhi_144.png",
+        "sizes": "144x144",
+        "type": "image/png",
+        "purpose": "maskable any"
+      },
+      {
+        "src": "assets/pwa/zhi_512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable any"
+      }
+    ]
+  }

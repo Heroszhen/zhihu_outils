@@ -23,6 +23,21 @@
           } -->
         </ion-list>
 
+        <ion-list>
+          <ion-menu-toggle auto-hide="false">
+            <ion-item lines="none" detail="false" class="cursor-pointer" (click)="reloadApp()">
+              <ion-icon aria-hidden="true" ios="reload-outline" md="reload-outline" class="me-3"></ion-icon>
+              <ion-label>Actualiser</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+          <ion-menu-toggle auto-hide="false">
+            <ion-item lines="none" detail="false" class="cursor-pointer" (click)="installApp()">
+              <ion-icon aria-hidden="true" ios="download-outline" md="download-outline" class="me-3"></ion-icon>
+              <ion-label>Installer</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+
         <!-- <ion-list id="labels-list">
           <ion-list-header>Labels</ion-list-header>
 
