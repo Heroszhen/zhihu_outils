@@ -40,7 +40,29 @@
           }
         </ion-list>
       </ion-segment-content>
-      <ion-segment-content [id]="Section.ARTICLES">Second</ion-segment-content>
+      <ion-segment-content [id]="Section.ARTICLES">
+        <ion-list>
+          @for (item of articles; track item; let i = $index) {
+            <ion-item-sliding>
+              <ion-item>
+                <ion-label>
+                  <div class="font-bold">{{item.title}}</div>
+                  <p>{{item.author}}</p>
+                  <div class="text-[13px]">{{item.description}}</div>
+                </ion-label>
+              </ion-item>
+
+              <ion-item-options>
+                <ion-item-option color="success" class="text-white" (click)="toggleForm(i)">Modifier</ion-item-option>
+                <ion-item-option color="tertiary" class="ion-padding" (click)="goToWebSite(i)">
+                  <ion-icon name="arrow-up-right-box-outline"></ion-icon>
+                </ion-item-option>
+                <ion-item-option color="danger" (click)="openDeleteModal(i)">Supprimer</ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+          }
+        </ion-list>
+      </ion-segment-content>
     </ion-segment-view>
   </div>
 
@@ -79,7 +101,7 @@
       </ion-header>
       <ion-content class="ion-padding">
         @if (selectedSection === Section.AUTHORS && authorM !== null) {
-          <form #authorForm="ngForm">
+          <form #authorForm="ngForm" (ngSubmit)="saveForm()">
             <ion-list>
               <ion-item>
                 <ion-input 
@@ -156,7 +178,94 @@
                 />
               </div>
             }
-            <ion-button expand="block" [disabled]="authorForm.invalid || !authorM.photo" (click)="saveForm()">
+            <ion-button type="submit" expand="block" [disabled]="authorForm.invalid || !authorM.photo">
+              Envoyer
+            </ion-button>
+          </form>
+        }
+        @if (selectedSection === Section.ARTICLES && articleForm !== null) {
+          <form [formGroup]="articleForm" (ngSubmit)="saveForm()">
+            <ion-list>
+              <ion-item>
+                <ion-input 
+                  label="Auteur *" 
+                  placeholder="auteur"
+                  id="author"
+                  name="author"
+                  formControlName="author"
+                ></ion-input>
+                @if (articleForm.get("author")?.invalid && articleForm.get("author")?.touched) {
+                  <ion-text color="danger">
+                    @if (articleForm.get("author")?.hasError("required")) {
+                      <div>Le champ est obligatoire.</div>
+                    }
+                  </ion-text>
+                }
+              </ion-item>
+              <ion-item>
+                <ion-input 
+                  label="Titre *" 
+                  placeholder="titre"
+                  id="title"
+                  name="title"
+                  formControlName="title"
+                ></ion-input>
+                @if (articleForm.get("title")?.invalid && articleForm.get("title")?.touched) {
+                  <ion-text color="danger">
+                    @if (articleForm.get("title")?.hasError("required")) {
+                      <div>Le titre est obligatoire.</div>
+                    }
+                    @if (articleForm.get("title")?.hasError("maxlength")) {
+                      <div>
+                        Le titre doit contenir au plus
+                        {{ articleForm.get("title")?.errors?.["maxlength"]?.requiredLength }} caractères.
+                      </div>
+                    }
+                  </ion-text>
+                }
+              </ion-item>
+              <ion-item>
+                <ion-textarea 
+                    label="Lien *" 
+                    placeholder="lien" 
+                    [autoGrow]="true"
+                    id="link"
+                    name="link"
+                    formControlName="link"
+                  ></ion-textarea>
+                @if (articleForm.get("link")?.invalid && articleForm.get("link")?.touched) {
+                  <ion-text color="danger">
+                    @if (articleForm.get("link")?.hasError("required")) {
+                      <div>Le champ est obligatoire.</div>
+                    }
+                    @if (articleForm.get("link")?.hasError("pattern")) {
+                      <div>
+                        Le lien n'est pas valide.
+                      </div>
+                    }
+                  </ion-text>
+                }
+              </ion-item>
+              <ion-item>
+                <ion-textarea 
+                    label="Description *" 
+                    placeholder="description" 
+                    [autoGrow]="true"
+                    id="description"
+                    name="description"
+                    formControlName="description"
+                    [rows]="4"
+                  ></ion-textarea>
+                @if (articleForm.get("description")?.invalid && articleForm.get("description")?.touched) {
+                  <ion-text color="danger">
+                    @if (articleForm.get("description")?.hasError("required")) {
+                      <div>Le champ est obligatoire.</div>
+                    }
+                  </ion-text>
+                }
+              </ion-item>
+            </ion-list>
+            <ion-button type="submit" expand="block" [disabled]="articleForm.invalid">
               Envoyer
             </ion-button>
           </form>

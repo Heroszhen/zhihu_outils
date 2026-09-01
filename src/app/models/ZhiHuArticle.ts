@@ -1,6 +1,7 @@
 import { Model } from "./Model";
 
 export class ZhiHuArticle extends Model {
+    author!: string;
     title!: string;
     link!: string;
     description!: string;

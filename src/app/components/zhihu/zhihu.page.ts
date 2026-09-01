@@ -1,5 +1,5 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from "@angular/forms";
+import { FormBuilder, Validators, FormGroup } from "@angular/forms";
 import { ZhiHuAuthor } from '../../models/ZhiHuAuthor';
 import { readFile } from '../../services/utilService';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
@@ -26,12 +26,14 @@ export class ZhihuPage {
   authorM: ZhiHuAuthor|null = null;
   authors: ZhiHuAuthor[] = [];
   articles: ZhiHuArticle[] = [];
+  articleForm: FormGroup | null = null;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private dbService: NgxIndexedDBService,
     private toastController: ToastController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private fb: FormBuilder,
   ) { }
 
   ionViewWillEnter() {
@@ -45,7 +47,7 @@ export class ZhihuPage {
     }).subscribe({
       next: (result) => {
         this.authors = result.authors;
-        this.articles = result.articles;
+        this.articles = result.articles.reverse();
         this.cdr.detectChanges();
       },
     });
@@ -69,6 +71,24 @@ export class ZhihuPage {
         }
         break;
       case Section.ARTICLES:
+        this.articleForm = this.fb.group({
+          author: [
+            index === null ? null : this.articles[index].author,
+            Validators.required,
+          ],
+          title: [
+            index === null ? null : this.articles[index].title,
+            [Validators.required, Validators.maxLength(100)],
+          ],
+          link: [
+            index === null ? null : this.articles[index].link,
+            [Validators.required, Validators.pattern('^https?://.*')]
+          ],
+          description: [
+            index === null ? null : this.articles[index].description,
+            Validators.required,
+          ],
+        });
         break;  
     }
     this.setOpen(true);
@@ -101,6 +121,7 @@ export class ZhihuPage {
         await this.editAuthor();
         break;
       case Section.ARTICLES:
+        await this.editArticle();
         break;
     }
   }
@@ -135,13 +156,16 @@ export class ZhihuPage {
       case Section.AUTHORS:
         url = this.authors[index].link;
         break;
+      case Section.ARTICLES:
+        url = this.articles[index].link;
+        break;
     }
     if (url) window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   async openDeleteModal(index:number) {
     const alert = await this.alertController.create({
-      header: 'Supprimer ?',
+      header: 'Veux tu supprimer cette ligne ?',
       buttons:  [
         {
           text: 'Cancel',
@@ -167,7 +191,43 @@ export class ZhihuPage {
         await lastValueFrom(this.dbService.delete<ZhiHuAuthor>(ZhiHuAuthor.tableName, this.authors[index].id ?? 0));
         this.authors= this.authors.filter((_, elmIndex: number) => elmIndex !== index);
         break;
+      case Section.ARTICLES:
+        await lastValueFrom(this.dbService.delete<ZhiHuArticle>(ZhiHuArticle.tableName, this.articles[index].id ?? 0));
+        this.articles= this.articles.filter((_, elmIndex: number) => elmIndex !== index);
+        break;
     }
     this.cdr.detectChanges();
+
+    const toast = await this.toastController.create({
+      message: 'Supprimé!',
+      duration: 1000,
+      position: 'bottom',
+    });
+
+    await toast.present();
+  }
+
+  async editArticle() {
+    if (this.articleForm === null) return;
+    try {
+      if (this.elmIndex === null) {
+        const result = await lastValueFrom(this.dbService.add<ZhiHuArticle>(ZhiHuArticle.tableName, this.articleForm.value));
+        this.articles.unshift(result);
+        this.setOpen(false);
+        this.cdr.detectChanges(); 
+      } else {
+        this.articles[this.elmIndex] = await lastValueFrom(
+          this.dbService.update<ZhiHuArticle>(ZhiHuArticle.tableName, {id: this.articles[this.elmIndex].id , ...this.articleForm.value}),
+        );
+      }
+
+      const toast = await this.toastController.create({
+        message: 'Enregistré!',
+        duration: 1000,
+        position: 'bottom',
+      });
+
+      await toast.present();
+    } catch {}
   }
 }
