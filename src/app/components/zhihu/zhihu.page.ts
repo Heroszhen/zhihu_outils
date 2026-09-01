@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from "@angular/forms";
 import { ZhiHuAuthor } from '../../models/ZhiHuAuthor';
 import { readFile } from '../../services/utilService';
@@ -18,7 +18,7 @@ enum Section {
   styleUrls: ['./zhihu.page.scss'],
   standalone: false,
 })
-export class ZhihuPage implements OnInit {
+export class ZhihuPage {
   readonly Section = Section;
   selectedSection:Section = Section.AUTHORS;
   elmIndex:number|null = null;
@@ -33,9 +33,6 @@ export class ZhihuPage implements OnInit {
     private toastController: ToastController,
     private alertController: AlertController
   ) { }
-
-  ngOnInit() {
-  }
 
   ionViewWillEnter() {
     this.getData();
