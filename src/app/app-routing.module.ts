@@ -15,10 +15,6 @@ const routes: Routes = [
     path: '',
     loadChildren: () => import('./components/zhihu/zhihu.module').then( m => m.ZhihuPageModule)
   },
-  {
-    path: 'zhihu',
-    loadChildren: () => import('./components/zhihu/zhihu.module').then( m => m.ZhihuPageModule)
-  }
 ];
 
 @NgModule({
