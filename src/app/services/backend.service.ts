@@ -9,7 +9,7 @@ export class BackendService extends BaseService {
   constructor(http: HttpClient) {
     super(http);
   }
-/*
+  /*
   sendMessage(query: Message) {
     return this.http.post(this.baseUrl + "/email/gmail_portefolio", JSON.stringify(query));
   }*/
