@@ -1,0 +1,43 @@
+import { Injectable } from "@angular/core";
+import { BaseService } from "./base.service";
+import { HttpClient } from "@angular/common/http";
+import { BehaviorSubject, Observable } from "rxjs";
+import { LoginResponse } from "../components/login/login.page";
+import { Profile } from "../models/actress";
+import { Router } from "@angular/router";
+
+@Injectable({
+  providedIn: "root",
+})
+export class AuthService extends BaseService {
+  user$ = new BehaviorSubject<Array<Profile | null>>([null]);
+
+  constructor(
+    http: HttpClient,
+    private router: Router,
+  ) {
+    super(http);
+  }
+
+  isLogined(): boolean {
+    const token = localStorage.getItem("token");
+    return !!token && token.trim() !== "";
+  }
+
+  login(email: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(this.baseUrl + "/login_check", { username: email, password: password });
+  }
+
+  getProfile() {
+    this.http.get<Profile>(this.baseUrl + "/users/profile", this.refreshHttpOptions()).subscribe({
+      next: (data: Profile) => {
+        this.user$.next([data]);
+      },
+    });
+  }
+
+  logout() {
+    localStorage.removeItem("token");
+    this.router.navigateByUrl("/", { replaceUrl: true });
+  }
+}

@@ -1,0 +1,53 @@
+<ion-content [fullscreen]="true">
+  <app-menu-button slot="fixed"></app-menu-button>
+  <section class="douyin flex justify-center items-center ion-padding">
+    <form #loginForm="ngForm" (ngSubmit)="submit()">
+      <h2>Connectez-vous pour découvrir plus de vidéos</h2>
+      <div class="mb-[50px] text-gray">
+        <small> Actrices, vidéos et photos réservées aux membres. </small>
+      </div>
+      <div class="ion-margin-bottom">
+        <ion-input
+          type="email"
+          name="email"
+          label="E-mail"
+          labelPlacement="stacked"
+          fill="outline"
+          #emailCtrl="ngModel"
+          [(ngModel)]="email"
+          required
+          email
+          autocomplete="email"
+        ></ion-input>
+        @if (emailCtrl.invalid && (emailCtrl.dirty || emailCtrl.touched)) {
+        <ion-text color="danger">
+          @if (emailCtrl.errors?.["required"]) { Le champ est obligatoire } @if (emailCtrl.errors?.["email"]) { Mail
+          invalide }
+        </ion-text>
+        }
+      </div>
+      <div class="ion-margin-bottom">
+        <ion-input
+          type="password"
+          name="password"
+          label="Mot de passe"
+          labelPlacement="stacked"
+          fill="outline"
+          #passwordCtrl="ngModel"
+          [(ngModel)]="password"
+          required
+          autocomplete="current-password"
+          class="ion-margin-top"
+        >
+          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+        </ion-input>
+        @if (passwordCtrl.invalid && (passwordCtrl.dirty || passwordCtrl.touched)) {
+        <ion-text color="danger"> @if (passwordCtrl.errors?.["required"]) { Le champ est obligatoire } </ion-text>
+        }
+      </div>
+      <ion-button type="submit" expand="block" color="danger" [disabled]="loginForm.invalid || loading()">
+        Envoyer
+      </ion-button>
+    </form>
+  </section>
+</ion-content>

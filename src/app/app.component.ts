@@ -1,6 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { BeforeInstallPromptEvent } from "./models/Interfaces";
-import { AlertController } from "@ionic/angular/lazy";
+import { AlertController, ToastController } from "@ionic/angular/lazy";
+import { AuthService } from "./services/auth.service";
+import { StoreService } from "./services/store.service";
 
 declare global {
   interface WindowEventMap {
@@ -26,11 +28,30 @@ export class AppComponent implements OnInit {
   protected readonly labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   */
 
+  protected authService = inject(AuthService);
+  private alertController = inject(AlertController);
+  private toastController = inject(ToastController);
   deferredPrompt: BeforeInstallPromptEvent | null = null;
-
-  constructor(private alertController: AlertController) {}
+  private storeService = inject(StoreService);
 
   ngOnInit() {
+    if (this.authService.isLogined()) {
+      this.authService.getProfile();
+    }
+
+    this.storeService.toastMessage$.subscribe(async (data: Array<string | null>) => {
+      if (data[0]) {
+        (
+          await this.toastController.create({
+            message: data[0],
+            duration: 1000,
+            position: "top",
+          })
+        ).present();
+        this.storeService.toastMessage$.next([null]);
+      }
+    });
+
     window.addEventListener("beforeinstallprompt", this.onBeforeInstallPrompt.bind(this));
   }
 

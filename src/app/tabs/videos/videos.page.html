@@ -1,0 +1,31 @@
+<ion-content [fullscreen]="true" [scrollY]="false">
+  <app-menu-button slot="fixed"></app-menu-button>
+  <section class="douyin" (scrollend)="onScrollEnd($event)">
+    @for (video of videos(); track video.id) {
+    <div class="slide">
+      @if (video.videoType === "extern") { @if (video.photo === null) {
+      <img src="assets/actress/sexy-blonde-big-kiss.gif" alt="" />
+      } @else {
+      <img [src]="s3Url + '/' + s3Root + '/' + video.photo.name" alt="" />
+      } } @else {
+      <iframe
+        #player
+        class="w-full min-h-[200px] border-none block"
+        [src]="playerUrl"
+        allowfullscreen
+        (load)="onPlayerLoad($event, $index)"
+      ></iframe>
+      }
+
+      <a
+        class="actress-profile h-[30px] w-[30px] rounded-full absolute z-100 right-3 top-1/2 cursor-pointer overflow-hidden"
+        [title]="video.actress.name"
+      >
+        @if (video.actress.photo !== null) {
+        <img [src]="s3Url + '/' + s3Root + '/' + video.actress.photo.name" alt="" class="object-cover" />
+        }
+      </a>
+    </div>
+    }
+  </section>
+</ion-content>

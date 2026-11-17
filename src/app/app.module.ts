@@ -6,10 +6,11 @@ import { IonicModule, IonicRouteStrategy } from "@ionic/angular/lazy";
 
 import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
-import { provideHttpClient } from "@angular/common/http";
+import { provideHttpClient, withInterceptors } from "@angular/common/http";
 
 import { DBConfig, NgxIndexedDBModule } from "ngx-indexed-db";
 import { ServiceWorkerModule } from "@angular/service-worker";
+import { errorInterceptor } from "./interceptors/error.interceptor";
 
 const dbConfig: DBConfig = {
   name: "www_yangzhen_fr",
@@ -41,7 +42,7 @@ const dbConfig: DBConfig = {
     }),
   ],
   providers: [
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([errorInterceptor])),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     importProvidersFrom(NgxIndexedDBModule.forRoot(dbConfig)),
   ],

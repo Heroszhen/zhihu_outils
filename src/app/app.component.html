@@ -9,7 +9,7 @@
           <ion-menu-toggle auto-hide="false">
             <ion-item
               routerDirection="root"
-              [routerLink]="['/']"
+              routerLink="/tabs/zhihu"
               lines="none"
               detail="false"
               routerLinkActive="selected"
@@ -17,6 +17,18 @@
               <ion-img slot="start" src="assets/zhihu.png"></ion-img>
               <ion-label>zhihu</ion-label>
             </ion-item>
+            @if (!authService.isLogined()) {
+              <ion-item
+                routerDirection="root"
+                routerLink="/login"
+                lines="none"
+                detail="false"
+                routerLinkActive="selected"
+              >
+                <ion-icon aria-hidden="true" name="log-in-outline"></ion-icon>
+                <ion-label class="ml-3">Connexion</ion-label>
+              </ion-item>
+            }
           </ion-menu-toggle>
 
           <!-- @for (p of appPages; track p; let i = $index) {
@@ -42,6 +54,14 @@
               <ion-label>Installer</ion-label>
             </ion-item>
           </ion-menu-toggle>
+          @if (authService.isLogined()) {
+            <ion-menu-toggle auto-hide="false">
+              <ion-item lines="none" detail="false" class="cursor-pointer" (click)="authService.logout()">
+                <ion-icon aria-hidden="true" ios="download-outline" md="log-out-outline" class="me-3"></ion-icon>
+                <ion-label>Déconnexion</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          }
         </ion-list>
 
         <!-- <ion-list id="labels-list">
