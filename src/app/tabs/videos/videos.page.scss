@@ -19,3 +19,22 @@
   justify-content: center;
   align-items: center;
 }
+
+.fab-transparent {
+  --background: transparent;
+  --background-activated: transparent;
+  --background-hover: transparent;
+  --background-focused: transparent;
+  --background-activated-opacity: 0;
+  --background-hover-opacity: 0;
+  --background-focused-opacity: 0;
+  --box-shadow: none;
+  --color: #fff;
+  --color-activated: #fff;
+  --color-hover: #fff;
+  --color-focused: #fff;
+  --ripple-color: transparent;
+  &.fab-button-close-active {
+    --background: rgba(91, 133, 241, 0.312);
+  }
+}
