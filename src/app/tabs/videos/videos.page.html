@@ -16,16 +16,25 @@
         (load)="onPlayerLoad($event, $index)"
       ></iframe>
       }
-
-      <a
-        class="actress-profile h-[30px] w-[30px] rounded-full absolute z-100 right-3 top-1/2 cursor-pointer overflow-hidden"
-        [title]="video.actress.name"
-      >
-        @if (video.actress.photo !== null) {
-        <img [src]="s3Url + '/' + s3Root + '/' + video.actress.photo.name" alt="" class="object-cover" />
-        }
-      </a>
     </div>
     }
+
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="bottom-1/3">
+      <ion-fab-button>
+        <ion-icon name="chevron-up-circle"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-list side="top">
+        <ion-fab-button>
+          <a
+            class="actress-profile h-[50px] w-[50px] rounded-full overflow-hidden"
+            [title]="videos()[videoIndex]?.actress?.name ?? ''"
+          >
+            @if (videos()[videoIndex]?.actress?.photo; as photo) {
+              <img [src]="s3Url + '/' + s3Root + '/' + photo.name" alt="" class="object-cover" />
+            }
+          </a>
+        </ion-fab-button>
+      </ion-fab-list>
+    </ion-fab>
   </section>
 </ion-content>

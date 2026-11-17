@@ -28,6 +28,7 @@ export class VideosPage implements OnInit {
   private currentIframe: HTMLIFrameElement | null = null;
   private canLoadVideos: boolean = true;
   private hasMore: boolean = true;
+  protected videoIndex: number = 0;
 
   ngOnInit() {
     this.authService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data: Array<Profile | null>) => {
@@ -68,6 +69,8 @@ export class VideosPage implements OnInit {
 
     const player = slide.querySelector("iframe");
     if (player === this.currentIframe) return; // même slide : on ne touche à rien
+
+    this.videoIndex = index;
 
     // on change de slide : arrête la vidéo précédente
     this.currentIframe?.contentWindow?.postMessage({ type: "STOP" }, environment.videoPlayerService);
@@ -116,5 +119,13 @@ export class VideosPage implements OnInit {
 
   ionViewWillLeave(): void {
     this.currentIframe?.contentWindow?.postMessage({ type: "STOP" }, environment.videoPlayerService);
+  }
+
+  ionViewDidEnter(): void {
+    if (this.currentIframe === null) return;
+  
+    const slide = this.currentIframe.closest(".slide");
+    const index = Array.from(slide?.parentElement?.children ?? []).indexOf(slide as Element);
+    this.postVideo(this.currentIframe, this.videos()[index]);
   }
 }
