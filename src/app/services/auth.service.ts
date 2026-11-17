@@ -40,4 +40,8 @@ export class AuthService extends BaseService {
     localStorage.removeItem("token");
     this.router.navigateByUrl("/", { replaceUrl: true });
   }
+
+  sendGoogleCredential(credential: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(this.baseUrl + "/login/google", { credential: credential });
+  }
 }

@@ -3,5 +3,6 @@ export const environment = {
     baseUrl: '',
     videoPlayerService: '',
     s3Url: '',
-    s3Root: ''
+    s3Root: '',
+    googleClientId:''
 };

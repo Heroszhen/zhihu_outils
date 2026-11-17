@@ -1,12 +1,15 @@
-import { Component, inject, OnInit, signal } from "@angular/core";
+import { Component, ElementRef, inject, OnInit, signal, viewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
 import { finalize } from "rxjs";
 import { StoreService } from "../../services/store.service";
+import { environment } from "../../../environments/environment";
 
 export type LoginResponse = {
   token: string;
 };
+
+declare const google: any;
 
 @Component({
   selector: "app-login",
@@ -21,11 +24,54 @@ export class LoginPage implements OnInit {
   password = "";
   loading = signal(false);
   private storeService = inject(StoreService);
+  googleButton = viewChild.required<ElementRef<HTMLElement>>("googleButton");
 
   ngOnInit() {
     if (this.authService.isLogined()) {
       this.router.navigateByUrl("/", { replaceUrl: true });
     }
+  }
+
+  ionViewDidEnter(): void {
+    this.initGoogle();
+  }
+
+  private initGoogle(): void {
+    if (typeof google === "undefined") {
+      setTimeout(() => this.initGoogle(), 200);
+      return;
+    }
+
+    google.accounts.id.initialize({
+      client_id: environment.googleClientId,
+      callback: (response: { credential: string }) => this.sendGoogleCredential(response.credential),
+    });
+
+    const container = this.googleButton().nativeElement;
+
+    google.accounts.id.renderButton(container, {
+      theme: "filled_black",
+      size: "large",
+      text: "continue_with",
+      locale: "fr",
+      width: Math.min(container.clientWidth, 400),
+    });
+  }
+
+  setLoginToken(token: string) {
+    localStorage.setItem("token", token);
+    this.storeService.toastMessage$.next(["Connexion réussite"]);
+    this.authService.getProfile();
+    this.router.navigateByUrl("/", { replaceUrl: true });
+  }
+
+  sendGoogleCredential(credential: string) {
+    this.authService.sendGoogleCredential(credential).subscribe({
+      next: async (data: LoginResponse) => {
+        this.setLoginToken(data.token);
+      },
+      error: () => {},
+    });
   }
 
   submit() {
@@ -36,10 +82,7 @@ export class LoginPage implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: async (data: LoginResponse) => {
-          localStorage.setItem("token", data.token);
-          this.storeService.toastMessage$.next(["Connexion réussite"]);
-          this.authService.getProfile();
-          this.router.navigateByUrl("/", { replaceUrl: true });
+          this.setLoginToken(data.token);
         },
         error: () => {},
       });
