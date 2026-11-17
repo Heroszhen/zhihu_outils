@@ -123,7 +123,7 @@ export class VideosPage implements OnInit {
 
   ionViewDidEnter(): void {
     if (this.currentIframe === null) return;
-  
+
     const slide = this.currentIframe.closest(".slide");
     const index = Array.from(slide?.parentElement?.children ?? []).indexOf(slide as Element);
     this.postVideo(this.currentIframe, this.videos()[index]);
