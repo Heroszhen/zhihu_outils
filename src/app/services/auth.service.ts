@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Service } from "@angular/core";
 import { BaseService } from "./base.service";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, Observable } from "rxjs";
@@ -6,18 +6,10 @@ import { LoginResponse } from "../components/login/login.page";
 import { Profile } from "../models/actress";
 import { Router } from "@angular/router";
 
-@Injectable({
-  providedIn: "root",
-})
+@Service()
 export class AuthService extends BaseService {
   user$ = new BehaviorSubject<Array<Profile | null>>([null]);
-
-  constructor(
-    http: HttpClient,
-    private router: Router,
-  ) {
-    super(http);
-  }
+  private router = inject(Router);
 
   isLogined(): boolean {
     const token = localStorage.getItem("token");

@@ -9,9 +9,10 @@ import { VideosPageRoutingModule } from "./videos-routing.module";
 import { VideosPage } from "./videos.page";
 
 import { MenuButtonComponent } from "../../shared/menu-button/menu-button.component";
+import { VideoPlayerComponent } from "../../shared/video-player/video-player.component";
 
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, VideosPageRoutingModule, MenuButtonComponent],
+  imports: [CommonModule, FormsModule, IonicModule, VideosPageRoutingModule, MenuButtonComponent, VideoPlayerComponent],
   declarations: [VideosPage],
 })
 export class VideosPageModule {}

@@ -9,13 +9,7 @@
       } @else {
       <img [src]="s3Url + '/' + s3Root + '/' + video.photo.name" alt="" />
       } } @else {
-      <iframe
-        #player
-        class="w-full min-h-[200px] border-none block"
-        [src]="playerUrl"
-        allowfullscreen
-        (load)="onPlayerLoad($event, $index)"
-      ></iframe>
+      <app-video-player [video]="video" [index]="$index" [currentIndex]="videoIndex()" />
       }
     </div>
     }
@@ -25,7 +19,7 @@
         <ion-icon name="chevron-up-circle"></ion-icon>
       </ion-fab-button>
       <ion-fab-list side="top">
-        @if (videos()[videoIndex]; as video) {
+        @let index = videoIndex(); @if (index !== null) { @if (videos()[index]; as video ) {
         <ion-fab-button>
           <a [href]="video.website" target="_blank" [title]="video.title">
             <ion-icon name="arrow-up-right-box-outline"></ion-icon>
@@ -38,7 +32,7 @@
             }
           </a>
         </ion-fab-button>
-        }
+        } }
       </ion-fab-list>
     </ion-fab>
   </section>

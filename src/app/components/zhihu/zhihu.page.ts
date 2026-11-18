@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from "@angular/core";
+import { Component, ChangeDetectorRef, inject } from "@angular/core";
 import { FormBuilder, Validators, FormGroup } from "@angular/forms";
 import { ZhiHuAuthor } from "../../models/ZhiHuAuthor";
 import { readFile } from "../../services/utilService";
@@ -28,13 +28,11 @@ export class ZhihuPage {
   articles: ZhiHuArticle[] = [];
   articleForm: FormGroup | null = null;
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private dbService: NgxIndexedDBService,
-    private toastController: ToastController,
-    private alertController: AlertController,
-    private fb: FormBuilder,
-  ) {}
+  private cdr = inject(ChangeDetectorRef);
+  private dbService = inject(NgxIndexedDBService);
+  private toastController = inject(ToastController);
+  private alertController = inject(AlertController);
+  private fb = inject(FormBuilder);
 
   ionViewWillEnter() {
     this.getData();

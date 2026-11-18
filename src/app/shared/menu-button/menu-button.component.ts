@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { IonicModule } from "@ionic/angular/lazy";
 
 @Component({
@@ -8,8 +8,4 @@ import { IonicModule } from "@ionic/angular/lazy";
   standalone: true,
   imports: [IonicModule],
 })
-export class MenuButtonComponent implements OnInit {
-  constructor() {}
-
-  ngOnInit() {}
-}
+export class MenuButtonComponent {}

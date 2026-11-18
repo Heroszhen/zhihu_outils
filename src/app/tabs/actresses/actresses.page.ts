@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 
 @Component({
   selector: "app-actresses",
@@ -6,8 +6,4 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./actresses.page.scss"],
   standalone: false,
 })
-export class ActressesPage implements OnInit {
-  constructor() {}
-
-  ngOnInit() {}
-}
+export class ActressesPage {}

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { filter, map } from "rxjs";
@@ -9,7 +9,7 @@ import { filter, map } from "rxjs";
   styleUrls: ["./tabs.page.scss"],
   standalone: false,
 })
-export class TabsPage implements OnInit {
+export class TabsPage {
   private router = inject(Router);
 
   hideTabBar = toSignal(
@@ -19,5 +19,4 @@ export class TabsPage implements OnInit {
     ),
     { initialValue: this.router.url.startsWith("/tabs/videos") },
   );
-  ngOnInit() {}
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 
 @Component({
   selector: "app-photos",
@@ -6,8 +6,4 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./photos.page.scss"],
   standalone: false,
 })
-export class PhotosPage implements OnInit {
-  constructor() {}
-
-  ngOnInit() {}
-}
+export class PhotosPage {}
