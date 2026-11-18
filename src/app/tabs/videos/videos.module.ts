@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { IonicModule } from "@ionic/angular/lazy";
 
@@ -12,7 +12,15 @@ import { MenuButtonComponent } from "../../shared/menu-button/menu-button.compon
 import { VideoPlayerComponent } from "../../shared/video-player/video-player.component";
 
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, VideosPageRoutingModule, MenuButtonComponent, VideoPlayerComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    VideosPageRoutingModule,
+    MenuButtonComponent,
+    VideoPlayerComponent,
+    ReactiveFormsModule,
+  ],
   declarations: [VideosPage],
 })
 export class VideosPageModule {}

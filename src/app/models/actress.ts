@@ -31,6 +31,11 @@ export type Video = {
   description: string | null;
 };
 
+export type Category = {
+  id: string;
+  name: string;
+};
+
 export type CollectionResponse<T = unknown> = {
   "@context": string;
   "@id": string;
@@ -38,3 +43,5 @@ export type CollectionResponse<T = unknown> = {
   member: T[];
   totalItems: number;
 };
+
+export type ActressName = Pick<Actress, "id" | "name">;

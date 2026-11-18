@@ -1,11 +1,13 @@
 import { Component, DestroyRef, HostListener, inject, OnInit, signal, viewChildren } from "@angular/core";
 import { ActressService } from "../../services/actress.service";
 import { AuthService } from "../../services/auth.service";
-import { CollectionResponse, Profile, Video } from "../../models/actress";
+import { ActressName, Category, CollectionResponse, Profile, Video } from "../../models/actress";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { finalize, map } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { VideoPlayerComponent } from "../../shared/video-player/video-player.component";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { UserRole } from "../../models/actress";
 
 @Component({
   selector: "app-videos",
@@ -17,6 +19,8 @@ export class VideosPage implements OnInit {
   private apiService = inject(ActressService);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
+  private fb = inject(FormBuilder);
+
   videos = signal<Video[]>([]);
   protected readonly s3Url = environment.s3Url;
   protected readonly s3Root = environment.s3Root;
@@ -26,10 +30,32 @@ export class VideosPage implements OnInit {
   videoIndex = signal<number | null>(0);
   private lastIndex = 0;
   private players = viewChildren(VideoPlayerComponent);
+  videoSearchForm: FormGroup | null = null;
+  profile = signal<Profile | null>(null);
+  actressesName = signal<ActressName[]>([]);
+  categories = signal<Category[]>([]);
+  isModalOpen: boolean = false;
+  readonly UserRole = UserRole;
+  videoSearchParams: Record<string, string | boolean | string[] | number> = { page: this.page };
 
   ngOnInit() {
     this.authService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data: Array<Profile | null>) => {
-      if (data[0] !== null) this.getVideos({ page: this.page });
+      if (data[0] !== null) {
+        this.profile.set(data[0]);
+        this.getVideos({ ...this.videoSearchParams, page: this.page });
+        this.getActressesName();
+        if (this.profile()?.roles.includes(UserRole.ADMIN)) {
+          this.getCategories();
+        }
+      }
+    });
+
+    this.videoSearchForm = this.fb.group({
+      title: [null as string | null],
+      categories: [[] as string[]],
+      actress: [null as string | null],
+      createdAt: ["desc" as "asc" | "desc"],
+      needJasmine: [null as boolean | null],
     });
   }
 
@@ -46,7 +72,31 @@ export class VideosPage implements OnInit {
     this.videoIndex.set(null);
   }
 
-  getVideos(params: Record<string, string | number> | null = null) {
+  getActressesName() {
+    this.apiService
+      .getActressesName()
+      .pipe(map((response: CollectionResponse<ActressName>) => response.member))
+      .subscribe({
+        next: (data: ActressName[]) => {
+          this.actressesName.set(data);
+        },
+        error: () => {},
+      });
+  }
+
+  getCategories() {
+    this.apiService
+      .getCategories()
+      .pipe(map((response: CollectionResponse<Category>) => response.member))
+      .subscribe({
+        next: (data: Category[]) => {
+          this.categories.set(data);
+        },
+        error: () => {},
+      });
+  }
+
+  getVideos(params: Record<string, string | boolean | string[] | number> | null = null) {
     if (!this.canLoadVideos || !this.hasMore) return;
 
     const profile = this.authService.user$.getValue()[0];
@@ -73,9 +123,37 @@ export class VideosPage implements OnInit {
 
     if (this.videos().length - index <= 3 && this.canLoadVideos && this.hasMore) {
       this.page++;
-      this.getVideos({ page: this.page });
+      this.getVideos({ ...this.videoSearchParams, page: this.page });
     }
 
     this.videoIndex.set(index);
+  }
+
+  toggleModal(isOpen: boolean) {
+    this.isModalOpen = isOpen;
+  }
+
+  sendSearchForm() {
+    const form = this.videoSearchForm?.value;
+    const query: Record<string, string | boolean | string[] | number> = {};
+
+    if (this.profile()?.roles.includes(UserRole.ADMIN) && form.needJasmine === true) {
+      query["needJasmine"] = true;
+    } else {
+      if (form.title) query["search[title]"] = form.title;
+      if (form.actress) query["search[actress.name]"] = form.actress;
+      if (form.categories?.length) query["categories[]"] = form.categories;
+    }
+    query["order[createdAt]"] = form.createdAt;
+
+    if (this.canLoadVideos) {
+      this.hasMore = true;
+      this.videos.set([]);
+      this.videoIndex.set(0);
+      this.page = 1;
+      this.videoSearchParams = { ...query, page: this.page };
+      this.getVideos(this.videoSearchParams);
+      this.toggleModal(false);
+    }
   }
 }
