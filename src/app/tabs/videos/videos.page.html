@@ -32,7 +32,7 @@
           </a>
         </ion-fab-button>
         <ion-fab-button>
-          <a class="actress-profile h-[50px] w-[50px] rounded-full overflow-hidden" [title]="video.actress?.name ?? ''">
+          <a class="actress-profile h-[50px] w-[50px] rounded-full overflow-hidden" [title]="video.actress.name">
             @if (video.actress.photo; as photo) {
             <img [src]="s3Url + '/' + s3Root + '/' + photo.name" alt="" class="object-cover h-full" />
             }
