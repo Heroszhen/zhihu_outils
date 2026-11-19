@@ -10,6 +10,7 @@ import { VideosPage } from "./videos.page";
 
 import { MenuButtonComponent } from "../../shared/menu-button/menu-button.component";
 import { VideoPlayerComponent } from "../../shared/video-player/video-player.component";
+import { SafePipe } from "../../pipes/safe.pipe";
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { VideoPlayerComponent } from "../../shared/video-player/video-player.com
     MenuButtonComponent,
     VideoPlayerComponent,
     ReactiveFormsModule,
+    SafePipe
   ],
   declarations: [VideosPage],
 })

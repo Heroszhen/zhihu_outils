@@ -20,12 +20,17 @@
       </ion-fab-button>
       <ion-fab-list side="top">
         @let index = videoIndex(); @if (index !== null) { @if (videos()[index]; as video ) {
+        <ion-fab-button (click)="toggleModal(true, ModalEventEnum.VIDEO_DETAIL)">
+          <a [title]="video.title">
+            <ion-icon name="document-outline"></ion-icon>
+          </a>
+        </ion-fab-button>
         <ion-fab-button>
           <a [href]="video.website" target="_blank" [title]="video.title">
             <ion-icon name="arrow-up-right-box-outline"></ion-icon>
           </a>
         </ion-fab-button>
-        <ion-fab-button (click)="toggleModal(true)">
+        <ion-fab-button (click)="toggleModal(true, ModalEventEnum.SEARCH_FORM)">
           <ion-icon name="search-outline"></ion-icon>
         </ion-fab-button>
         <ion-fab-button>
@@ -44,7 +49,11 @@
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>Rechercher</ion-title>
+          <ion-title>
+            @if (modalEvent === ModalEventEnum.SEARCH_FORM) {
+              Rechercher
+            }
+          </ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="toggleModal(false)">
               <ion-icon name="close-circle-outline"></ion-icon>
@@ -53,64 +62,78 @@
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
-        @if (videoSearchForm !== null) {
-        <form [formGroup]="videoSearchForm" (ngSubmit)="sendSearchForm()">
-          <div class="mb-5">
-            <ion-input
-              formControlName="title"
-              label="Titre"
-              labelPlacement="stacked"
-              fill="outline"
-              placeholder="Rechercher un titre…"
-              [clearInput]="true"
-            >
-              <ion-icon slot="start" name="search-outline" aria-hidden="true"></ion-icon>
-            </ion-input>
-          </div>
-          <div class="mb-5">
-            <ion-select
-              formControlName="actress"
-              label="Actrice"
-              labelPlacement="stacked"
-              placeholder="Toutes les actrices"
-              interface="popover"
-              fill="outline"
-            >
-              <ion-select-option [value]="null">Toutes les actrices</ion-select-option>
-              @for (actress of actressesName(); track actress.id) {
-              <ion-select-option [value]="actress.name">{{ actress.name }}</ion-select-option>
-              }
-            </ion-select>
-          </div>
-          <div class="mb-5">
-            <ion-label>Date de création</ion-label><br />
-            <ion-radio-group formControlName="createdAt" aria-label="Trier par date">
-              <ion-radio value="desc" labelPlacement="end" class="mr-3">Plus récentes</ion-radio>
-              <ion-radio value="asc" labelPlacement="end">Plus anciennes</ion-radio>
-            </ion-radio-group>
-          </div>
-          @let user = profile(); @if (user !== null && user.roles.includes(UserRole.ADMIN)) {
-          <div class="mb-5">
-            <ion-select
-              formControlName="categories"
-              label="Catégories"
-              labelPlacement="stacked"
-              placeholder="Toutes les catégories"
-              interface="popover"
-              fill="outline"
-              [multiple]="true"
-            >
-              @for (category of categories(); track category.id) {
-              <ion-select-option [value]="category.name">{{ category.name }}</ion-select-option>
-              }
-            </ion-select>
-          </div>
-          <div class="mb-5">
-            <ion-toggle labelPlacement="end" formControlName="needJasmine">Jasmine</ion-toggle>
-          </div>
+        @if (modalEvent === ModalEventEnum.SEARCH_FORM && videoSearchForm !== null) {
+          <form [formGroup]="videoSearchForm" (ngSubmit)="sendSearchForm()">
+            <div class="mb-5">
+              <ion-input
+                formControlName="title"
+                label="Titre"
+                labelPlacement="stacked"
+                fill="outline"
+                placeholder="Rechercher un titre…"
+                [clearInput]="true"
+              >
+                <ion-icon slot="start" name="search-outline" aria-hidden="true"></ion-icon>
+              </ion-input>
+            </div>
+            <div class="mb-5">
+              <ion-select
+                formControlName="actress"
+                label="Actrice"
+                labelPlacement="stacked"
+                placeholder="Toutes les actrices"
+                interface="popover"
+                fill="outline"
+              >
+                <ion-select-option [value]="null">Toutes les actrices</ion-select-option>
+                @for (actress of actressesName(); track actress.id) {
+                <ion-select-option [value]="actress.name">{{ actress.name }}</ion-select-option>
+                }
+              </ion-select>
+            </div>
+            <div class="mb-5">
+              <ion-label>Date de création</ion-label><br />
+              <ion-radio-group formControlName="createdAt" aria-label="Trier par date">
+                <ion-radio value="desc" labelPlacement="end" class="mr-3">Plus récentes</ion-radio>
+                <ion-radio value="asc" labelPlacement="end">Plus anciennes</ion-radio>
+              </ion-radio-group>
+            </div>
+            @let user = profile(); @if (user !== null && user.roles.includes(UserRole.ADMIN)) {
+            <div class="mb-5">
+              <ion-select
+                formControlName="categories"
+                label="Catégories"
+                labelPlacement="stacked"
+                placeholder="Toutes les catégories"
+                interface="popover"
+                fill="outline"
+                [multiple]="true"
+              >
+                @for (category of categories(); track category.id) {
+                <ion-select-option [value]="category.name">{{ category.name }}</ion-select-option>
+                }
+              </ion-select>
+            </div>
+            <div class="mb-5">
+              <ion-toggle labelPlacement="end" formControlName="needJasmine">Jasmine</ion-toggle>
+            </div>
+            }
+            <ion-button expand="full" type="submit">Full</ion-button>
+          </form>
+        }
+
+        @let index = videoIndex();
+        @if (modalEvent === ModalEventEnum.VIDEO_DETAIL && index !== null) {
+          @if (videos()[index]; as video) {
+            <h4>{{ video.title }}</h4>
+            @if (video.photo; as photo) {
+              <img [src]="s3Url + '/' + s3Root + '/' + photo.name" alt="" />
+            }
+            <div class="mt-2 mb-4">{{ video.actress.name }}</div>
+            @if (video.description !== null) {
+              <div [innerHTML]="video.description | safe: 'html'"></div>
+            }
           }
-          <ion-button expand="full" type="submit">Full</ion-button>
-        </form>
         }
       </ion-content>
     </ng-template>

@@ -3,7 +3,6 @@ import {
   Component,
   DestroyRef,
   ElementRef,
-  HostListener,
   inject,
   Injector,
   OnInit,
@@ -25,6 +24,10 @@ import { AlertController } from "@ionic/angular/lazy";
 import { NgxIndexedDBService } from "ngx-indexed-db";
 import { ActressVideo } from "../../models/ActressVideo";
 
+enum ModalEventEnum {
+  SEARCH_FORM = "search_form",
+  VIDEO_DETAIL = "video_detail",
+}
 @Component({
   selector: "app-videos",
   templateUrl: "./videos.page.html",
@@ -58,6 +61,8 @@ export class VideosPage implements OnInit {
   isModalOpen: boolean = false;
   readonly UserRole = UserRole;
   videoSearchParams: Record<string, string | boolean | string[] | number> = { page: this.page };
+  readonly ModalEventEnum = ModalEventEnum;
+  modalEvent: ModalEventEnum|null = null;
 
   ngOnInit() {
     this.authService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(async (data: Array<Profile | null>) => {
@@ -201,8 +206,9 @@ export class VideosPage implements OnInit {
     await this.storeVideos(this.videos(), { ...this.videoSearchParams, page: this.page });
   }
 
-  toggleModal(isOpen: boolean) {
+  toggleModal(isOpen: boolean, modalEvent: ModalEventEnum|null = null) {
     this.isModalOpen = isOpen;
+    this.modalEvent = modalEvent;
   }
 
   sendSearchForm() {
