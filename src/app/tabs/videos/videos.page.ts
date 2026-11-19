@@ -61,6 +61,7 @@ export class VideosPage implements OnInit {
 
   ionViewDidEnter(): void {
     this.videoIndex.set(this.lastIndex);
+    this.players().find((player) => player.index() === this.lastIndex)?.play();
   }
 
   ionViewWillLeave(): void {

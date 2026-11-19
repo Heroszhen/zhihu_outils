@@ -35,10 +35,6 @@ export class VideoPlayerComponent {
     });
   }
 
-  onLoad(): void {
-    this.loaded.set(true);
-  }
-
   private postVideo(iframe: HTMLIFrameElement) {
     iframe.contentWindow?.postMessage(
       {
@@ -61,6 +57,11 @@ export class VideoPlayerComponent {
     if (!iframe || event.origin !== environment.videoPlayerService) return;
     if (event.source !== iframe.contentWindow) return;
 
+    if (event.data?.type === "PLAYER_LOADED") {
+      this.loaded.set(true);
+      return;
+    }
+
     if (event.data?.type === "RESIZE") {
       iframe.style.height = event.data.payload.videoHeight + "px";
     }
@@ -68,5 +69,12 @@ export class VideoPlayerComponent {
 
   stop(): void {
     this.iframeRef()?.nativeElement.contentWindow?.postMessage({ type: "STOP" }, environment.videoPlayerService);
+  }
+
+  play(): void {
+    const iframe = this.iframeRef()?.nativeElement;
+    if (iframe && this.loaded()) {
+      this.postVideo(iframe);
+    }
   }
 }

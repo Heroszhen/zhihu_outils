@@ -1,15 +1,14 @@
 import { inject, Service } from "@angular/core";
 import { BaseService } from "./base.service";
-import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, Observable } from "rxjs";
 import { LoginResponse } from "../components/login/login.page";
 import { Profile } from "../models/actress";
-import { Router } from "@angular/router";
+import { NavController } from "@ionic/angular/common";
 
 @Service()
 export class AuthService extends BaseService {
   user$ = new BehaviorSubject<Array<Profile | null>>([null]);
-  private router = inject(Router);
+  private navCtrl = inject(NavController);
 
   isLogined(): boolean {
     const token = localStorage.getItem("token");
@@ -30,7 +29,8 @@ export class AuthService extends BaseService {
 
   logout() {
     localStorage.removeItem("token");
-    this.router.navigateByUrl("/", { replaceUrl: true });
+    this.user$.next([null]);
+    this.navCtrl.navigateRoot("/login", { replaceUrl: true });
   }
 
   sendGoogleCredential(credential: string): Observable<LoginResponse> {
