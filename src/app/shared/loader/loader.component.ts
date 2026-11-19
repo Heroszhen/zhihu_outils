@@ -7,15 +7,15 @@ import { IonicModule } from "@ionic/angular/lazy";
   templateUrl: "./loader.component.html",
   styleUrls: ["./loader.component.scss"],
   standalone: true,
-  imports: [IonicModule]
+  imports: [IonicModule],
 })
 export class LoaderComponent implements OnInit {
   private storeService = inject(StoreService);
-  loaderMessage = signal<string|null>(null);
+  loaderMessage = signal<string | null>(null);
 
   ngOnInit() {
-    this.storeService.loaderMessage$.subscribe((data:Array<string | null>) => {
+    this.storeService.loaderMessage$.subscribe((data: Array<string | null>) => {
       this.loaderMessage.set(data[0]);
-    })
+    });
   }
 }

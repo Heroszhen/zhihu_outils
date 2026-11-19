@@ -1,4 +1,16 @@
-import { afterNextRender, Component, DestroyRef, ElementRef, HostListener, inject, Injector, OnInit, signal, viewChild, viewChildren } from "@angular/core";
+import {
+  afterNextRender,
+  Component,
+  DestroyRef,
+  ElementRef,
+  HostListener,
+  inject,
+  Injector,
+  OnInit,
+  signal,
+  viewChild,
+  viewChildren,
+} from "@angular/core";
 import { ActressService } from "../../services/actress.service";
 import { AuthService } from "../../services/auth.service";
 import { ActressName, Category, CollectionResponse, Profile, Video } from "../../models/actress";
@@ -33,7 +45,7 @@ export class VideosPage implements OnInit {
   protected readonly s3Url = environment.s3Url;
   protected readonly s3Root = environment.s3Root;
   private readonly storeService = inject(StoreService);
-  protected page:number = 1;
+  protected page: number = 1;
   private canLoadVideos: boolean = true;
   private hasMore: boolean = true;
   videoIndex = signal<number | null>(0);
@@ -62,24 +74,28 @@ export class VideosPage implements OnInit {
         await alert.present();
         const { role } = await alert.onDidDismiss();
 
-        if (role === '1') {
-          const result = await lastValueFrom(this.dbService.getByID<ActressVideo>(ActressVideo.tableName, '1'));
+        if (role === "1") {
+          const result = await lastValueFrom(this.dbService.getByID<ActressVideo>(ActressVideo.tableName, "1"));
           if (result) {
             this.videos.set(result.videos);
             this.videoIndex.set(result.videoIndex);
-            this.videoSearchParams = result.filters
+            this.videoSearchParams = result.filters;
             this.page = Number(result.filters["page"] ?? 1);
-            afterNextRender(() => {
-              const section = this.feed()?.nativeElement;
-              if (section) section.scrollTop = (this.videoIndex() ?? 0) * section.clientHeight;
-            }, { injector: this.injector });
+            console.log(result);
+            afterNextRender(
+              () => {
+                const section = this.feed()?.nativeElement;
+                if (section) section.scrollTop = (this.videoIndex() ?? 0) * section.clientHeight;
+              },
+              { injector: this.injector },
+            );
           } else {
             this.getVideos({ ...this.videoSearchParams, page: this.page }, "Chargement en cours...");
           }
         } else {
           this.getVideos({ ...this.videoSearchParams, page: this.page }, "Chargement en cours...");
         }
-        
+
         this.getActressesName();
         if (this.profile()?.roles.includes(UserRole.ADMIN)) {
           this.getCategories();
@@ -98,7 +114,9 @@ export class VideosPage implements OnInit {
 
   ionViewDidEnter(): void {
     this.videoIndex.set(this.lastIndex);
-    this.players().find((player) => player.index() === this.lastIndex)?.play();
+    this.players()
+      .find((player) => player.index() === this.lastIndex)
+      ?.play();
   }
 
   ionViewWillLeave(): void {
@@ -135,8 +153,8 @@ export class VideosPage implements OnInit {
   }
 
   getVideos(
-    params: Record<string, string | boolean | string[] | number> | null = null, 
-    loaderMessage: string|null = null
+    params: Record<string, string | boolean | string[] | number> | null = null,
+    loaderMessage: string | null = null,
   ) {
     if (!this.canLoadVideos || !this.hasMore) return;
 
@@ -150,17 +168,19 @@ export class VideosPage implements OnInit {
     this.apiService
       .getVideos(profile, params)
       .pipe(map((response: CollectionResponse<Video>) => response.member))
-      .pipe(finalize(() => {
-        this.canLoadVideos = true;
-        this.storeService.loaderMessage$.next([null])
-      }))
+      .pipe(
+        finalize(() => {
+          this.canLoadVideos = true;
+          this.storeService.loaderMessage$.next([null]);
+        }),
+      )
       .subscribe({
         next: (data: Video[]) => {
           if (data.length === 0) {
             this.hasMore = false;
           } else {
             this.videos.update((videos) => [...videos, ...data]);
-            this.storeVideos(this.videos(), params)
+            this.storeVideos(this.videos(), params);
           }
         },
         error: () => {},
@@ -178,7 +198,7 @@ export class VideosPage implements OnInit {
 
     this.videoIndex.set(index);
 
-    await this.storeVideos(this.videos(), {...this.videoSearchParams, page: this.page});
+    await this.storeVideos(this.videos(), { ...this.videoSearchParams, page: this.page });
   }
 
   toggleModal(isOpen: boolean) {
@@ -209,16 +229,17 @@ export class VideosPage implements OnInit {
     }
   }
 
-  private async storeVideos(videos: Video[], searchParams:  Record<string, string | boolean | string[] | number> |null) {
+  private async storeVideos(
+    videos: Video[],
+    searchParams: Record<string, string | boolean | string[] | number> | null,
+  ) {
     const av = new ActressVideo();
     av.assignData({
-      id: '1',
+      id: "1",
       videos: videos,
       videoIndex: this.videoIndex() ?? 0,
-      filters: searchParams ?? {}
+      filters: searchParams ?? {},
     });
-    await lastValueFrom(
-      this.dbService.update<ActressVideo>(ActressVideo.tableName, av),
-    );
+    await lastValueFrom(this.dbService.update<ActressVideo>(ActressVideo.tableName, av));
   }
 }

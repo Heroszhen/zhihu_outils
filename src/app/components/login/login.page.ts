@@ -66,7 +66,7 @@ export class LoginPage implements OnInit {
   }
 
   sendGoogleCredential(credential: string) {
-    this.storeService.loaderMessage$.next(['Connexion en cours...']);
+    this.storeService.loaderMessage$.next(["Connexion en cours..."]);
     this.authService
       .sendGoogleCredential(credential)
       .pipe(finalize(() => this.storeService.loaderMessage$.next([null])))

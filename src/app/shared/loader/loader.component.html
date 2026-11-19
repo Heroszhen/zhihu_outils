@@ -1,10 +1,8 @@
 @if (loaderMessage() !== null) {
-    <section 
-        class="fixed z-[9999] inset-0 w-full h-[100vh] flex justify-center items-center"
-    >
-        <div class="bg-[#22232b] w-[300px] text-center rounded p-4">
-            <ion-spinner name="circular" style="--color: #E3134B"></ion-spinner>
-            <div class="mt-3 text-white">{{ loaderMessage() }}</div>
-        </div>
-    </section>
+  <section class="fixed z-[9999] inset-0 w-full h-[100vh] flex justify-center items-center">
+    <div class="bg-[#22232b] w-[300px] text-center rounded p-4">
+      <ion-spinner name="circular" style="--color: #e3134b"></ion-spinner>
+      <div class="mt-3 text-white">{{ loaderMessage() }}</div>
+    </div>
+  </section>
 }
