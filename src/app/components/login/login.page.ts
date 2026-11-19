@@ -20,10 +20,10 @@ declare const google: any;
 export class LoginPage implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
+  private storeService = inject(StoreService);
   email = "";
   password = "";
   loading = signal(false);
-  private storeService = inject(StoreService);
   googleButton = viewChild.required<ElementRef<HTMLElement>>("googleButton");
 
   ngOnInit() {
@@ -66,12 +66,16 @@ export class LoginPage implements OnInit {
   }
 
   sendGoogleCredential(credential: string) {
-    this.authService.sendGoogleCredential(credential).subscribe({
-      next: async (data: LoginResponse) => {
-        this.setLoginToken(data.token);
-      },
-      error: () => {},
-    });
+    this.storeService.loaderMessage$.next(['Connexion en cours...']);
+    this.authService
+      .sendGoogleCredential(credential)
+      .pipe(finalize(() => this.storeService.loaderMessage$.next([null])))
+      .subscribe({
+        next: async (data: LoginResponse) => {
+          this.setLoginToken(data.token);
+        },
+        error: () => {},
+      });
   }
 
   submit() {

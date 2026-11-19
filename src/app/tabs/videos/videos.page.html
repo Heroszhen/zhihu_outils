@@ -1,7 +1,7 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
   <app-menu-button slot="fixed"></app-menu-button>
 
-  <section class="douyin ion-content-scroll-host" (scrollend)="onScrollEnd($event)">
+  <section class="douyin ion-content-scroll-host" (scrollend)="onScrollEnd($event)" #feed>
     @for (video of videos(); track video.id) {
     <div class="slide">
       @if (video.videoType === "extern") { @if (video.photo === null) {

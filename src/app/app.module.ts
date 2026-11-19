@@ -11,10 +11,11 @@ import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import { DBConfig, NgxIndexedDBModule } from "ngx-indexed-db";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { errorInterceptor } from "./interceptors/error.interceptor";
+import { LoaderComponent } from "./shared/loader/loader.component";
 
 const dbConfig: DBConfig = {
   name: "www_yangzhen_fr",
-  version: 1,
+  version: 2,
   objectStoresMeta: [
     {
       store: "zhi_hu_author",
@@ -23,6 +24,11 @@ const dbConfig: DBConfig = {
     },
     {
       store: "zhi_hu_article",
+      storeConfig: { keyPath: "id", autoIncrement: true },
+      storeSchema: [],
+    },
+    {
+      store: "actress_video",
       storeConfig: { keyPath: "id", autoIncrement: true },
       storeSchema: [],
     },
@@ -40,6 +46,7 @@ const dbConfig: DBConfig = {
       // or after 30 seconds (whichever comes first).
       registrationStrategy: "registerWhenStable:30000",
     }),
+    LoaderComponent,
   ],
   providers: [
     provideHttpClient(withInterceptors([errorInterceptor])),
