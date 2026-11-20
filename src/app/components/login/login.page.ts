@@ -54,7 +54,7 @@ export class LoginPage implements OnInit {
       size: "large",
       text: "continue_with",
       locale: "fr",
-      width: Math.min(container.clientWidth, 400),
+      width: container.clientWidth,
     });
   }
 
