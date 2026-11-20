@@ -5,6 +5,7 @@ export class ActressVideo extends Model {
   videos: Video[] = [];
   filters: Record<string, string | boolean | string[] | number> = {};
   videoIndex: number = 0;
+  userId: string = "";
   public static readonly tableName = "actress_video";
 
   constructor() {

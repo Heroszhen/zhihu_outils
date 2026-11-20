@@ -21,7 +21,7 @@ import { SafePipe } from "../../pipes/safe.pipe";
     MenuButtonComponent,
     VideoPlayerComponent,
     ReactiveFormsModule,
-    SafePipe
+    SafePipe,
   ],
   declarations: [VideosPage],
 })
