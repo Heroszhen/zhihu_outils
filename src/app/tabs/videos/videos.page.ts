@@ -90,6 +90,14 @@ export class VideosPage implements OnInit {
             this.videoSearchParams = result.filters;
             this.page = Number(result.filters["page"] ?? 0);
 
+            this.videoSearchForm?.patchValue({
+              title: result.filters["search[title]"] ?? null,
+              actress: result.filters["search[actress.name]"] ?? null,
+              categories: result.filters["categories[]"] ?? [],
+              createdAt: result.filters["order[createdAt]"] ?? "desc",
+              needJasmine: result.filters["needJasmine"] ?? null,
+            });
+
             afterNextRender(
               () => {
                 const section = this.feed()?.nativeElement;
