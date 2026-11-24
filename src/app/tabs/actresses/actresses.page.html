@@ -1,13 +1,55 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
-    <ion-title>actresses</ion-title>
+    <ion-buttons slot="end">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="text-start px-4">Actrices</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">actresses</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <section>
+    @if (actressSearchForm !== null) {
+    <form [formGroup]="actressSearchForm">
+      <ion-searchbar formControlName="name" placeholder="Rechercher par nom"> </ion-searchbar>
+      <div class="flex gap-2 overflow-x-scroll py-2 w-full">
+        @for (country of countries(); track country) {
+        <ion-chip
+          class="shrink-0 whitespace-nowrap chip-country"
+          [outline]="!isCountrySelected(country)"
+          (click)="toggleCountry(country)"
+        >
+          {{ country }}
+        </ion-chip>
+        }
+      </div>
+    </form>
+    }
+  </section>
+  <section>
+    <ion-grid>
+      <ion-row>
+        @for (actress of actresses(); track actress.id) {
+        <ion-col size="6" class="ion-margin-bottom">
+          @if (actress.photo) {
+          <img [src]="s3Url + '/' + s3Root + '/' + actress.photo.name" alt="" class="rounded-xl" />
+          }
+          <div>
+            <a
+              [routerLink]="['detail', actress.id]"
+              class="text-[15px] text-dark font-semibold underline cursor-pointer"
+            >
+              {{ actress.name }}
+            </a>
+          </div>
+        </ion-col>
+        }
+      </ion-row>
+    </ion-grid>
+  </section>
+  @if (hasMore()) {
+  <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  }
 </ion-content>

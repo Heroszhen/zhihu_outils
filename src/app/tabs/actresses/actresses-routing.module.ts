@@ -8,6 +8,10 @@ const routes: Routes = [
     path: "",
     component: ActressesPage,
   },
+  {
+    path: "detail/:id",
+    loadChildren: () => import("./actress-detail/actress-detail.module").then((m) => m.ActressDetailPageModule),
+  },
 ];
 
 @NgModule({

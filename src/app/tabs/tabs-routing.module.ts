@@ -30,14 +30,6 @@ const routes: Routes = [
       { path: "", redirectTo: "zhihu", pathMatch: "full" },
     ],
   },
-  {
-    path: "actresses",
-    loadChildren: () => import("./actresses/actresses.module").then((m) => m.ActressesPageModule),
-  },
-  {
-    path: "photos",
-    loadChildren: () => import("./photos/photos.module").then((m) => m.PhotosPageModule),
-  },
 ];
 
 @NgModule({

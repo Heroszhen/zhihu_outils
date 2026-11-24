@@ -38,7 +38,7 @@ const dbConfig: DBConfig = {
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(),
+    IonicModule.forRoot({ swipeBackEnabled: true }),
     AppRoutingModule,
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: !isDevMode(),
