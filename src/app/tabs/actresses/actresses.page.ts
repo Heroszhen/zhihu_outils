@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, OnInit, signal } from "@angular/core";
 import { ActressService } from "../../services/actress.service";
 import { Actress, CollectionResponse } from "../../models/actress";
-import { debounceTime, distinctUntilChanged, finalize, map } from "rxjs";
+import { debounceTime, distinctUntilChanged, finalize, map, Subscription } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { InfiniteScrollCustomEvent } from "@ionic/angular/lazy";
 import { FormBuilder } from "@angular/forms";
@@ -31,6 +31,7 @@ export class ActressesPage implements OnInit {
     name: [""],
     countries: [[] as string[]],
   });
+  private request?: Subscription;
 
   ngOnInit() {
     this.getActresses();
@@ -57,6 +58,8 @@ export class ActressesPage implements OnInit {
   }
 
   private getActresses(event?: InfiniteScrollCustomEvent) {
+    this.request?.unsubscribe();
+
     this.canLoad = false;
     this.hasMore.set(true);
     this.storeService.loaderMessage$.next(["Chargement en cours..."]);
@@ -68,7 +71,7 @@ export class ActressesPage implements OnInit {
       params["country[]"] = countries;
     }
 
-    this.apiService
+    this.request = this.apiService
       .getActressesList(params)
       .pipe(map((response: CollectionResponse<Actress>) => response.member))
       .pipe(

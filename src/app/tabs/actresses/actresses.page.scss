@@ -2,3 +2,14 @@
   color: white;
   background-color: #c2185b;
 }
+
+ion-searchbar {
+  --background: #f4f4f6;
+  --border-radius: 14px;
+  --box-shadow: none;
+  --color: #18181b;
+  --placeholder-color: #71717a;
+  --placeholder-opacity: 1;
+  --icon-color: #52525b;
+  padding-inline: 0;
+}

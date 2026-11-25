@@ -81,3 +81,6 @@
 </ion-app>
 
 <app-loader></app-loader>
+@if (bigImageUrl(); as url) {
+  <app-image-player [url]="url"></app-image-player>
+}

@@ -1,0 +1,8 @@
+@if (url(); as url) {
+  <section class="w-full h-[100vh] bg-black fixed inset-0 flex flex-wrap items-center">
+    <div class="absolute z-2 inset-0 text-right text-white text-[25px] h-[30px] pt-2 pe-2">
+      <ion-icon name="close-circle-outline" class="cursor-pointer" (click)="closeBigImage()"></ion-icon>
+    </div>
+    <img [src]="url" alt="" />
+  </section>
+}

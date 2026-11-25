@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { BeforeInstallPromptEvent } from "./models/Interfaces";
 import { AlertController, ToastController } from "@ionic/angular/lazy";
 import { AuthService } from "./services/auth.service";
@@ -33,6 +33,7 @@ export class AppComponent implements OnInit {
   private toastController = inject(ToastController);
   deferredPrompt: BeforeInstallPromptEvent | null = null;
   private storeService = inject(StoreService);
+  protected bigImageUrl = signal<string | null>(null);
 
   ngOnInit() {
     if (this.authService.isLogined()) {
@@ -50,6 +51,10 @@ export class AppComponent implements OnInit {
         ).present();
         this.storeService.toastMessage$.next([null]);
       }
+    });
+
+    this.storeService.bigImageUrl$.subscribe((data: Array<string | null>) => {
+      this.bigImageUrl.set(data[0]);
     });
 
     window.addEventListener("beforeinstallprompt", this.onBeforeInstallPrompt.bind(this));

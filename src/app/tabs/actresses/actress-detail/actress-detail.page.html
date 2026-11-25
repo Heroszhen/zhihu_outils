@@ -1,13 +1,113 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>actress-detail</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">actress-detail</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  @if (actressDetail(); as actress) {
+  <div class="relative h-[340px] bg-gray-200 ion-margin-bottom">
+    @if (actress.photo) {
+    <img [src]="s3Url + '/' + s3Root + '/' + actress.photo" [alt]="actress.name" class="w-full h-full object-cover" />
+    }
+    <ion-back-button defaultHref="/tabs/actresses" text="" class="back-button absolute top-4 left-4"></ion-back-button>
+  </div>
+
+  <ion-segment value="default" class="ps-1 pe-1">
+    <ion-segment-button value="default" content-id="default">
+      <ion-label>Infos</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="photos" content-id="photos">
+      <ion-label>Photos</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="videos" content-id="videos">
+      <ion-label>Videos</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <ion-segment-view>
+    <ion-segment-content id="default">
+      <section class="px-5 pt-5 pb-2">
+        <h1 class="m-0 text-[26px] font-bold">{{ actress.name }}</h1>
+
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1.5 rounded-[14px] bg-[#f4f4f6] text-[13px] font-medium">{{ actress.country }}</span>
+          @if (actress.birthday) {
+          <span class="px-3 py-1.5 rounded-[14px] bg-[#f4f4f6] text-[13px] font-medium">
+            Née le {{ actress.birthday | date: "dd/MM/yyyy" }}
+          </span>
+          }
+        </div>
+
+        @if (actress.description) {
+        <div class="text-[15px] leading-relaxed text-[#3f3f46]" [innerHTML]="actress.description"></div>
+        }
+      </section>
+    </ion-segment-content>
+
+    <ion-segment-content id="photos">
+      <div class="grid grid-cols-3 gap-1 px-5 py-4">
+        @for (image of actress.images; track image) { @let url = s3Url + '/' + s3Root + '/' + image;
+        <img
+          [src]="url"
+          alt=""
+          loading="lazy"
+          class="w-full aspect-[3/4] object-cover rounded-lg bg-gray-200"
+          (dblclick)="showBigImage(url)"
+        />
+        }
+      </div>
+    </ion-segment-content>
+
+    <ion-segment-content id="videos">
+      <div class="grid grid-cols-3 gap-1 px-5 py-4">
+        @for (video of actress.videos; track video.id) {
+        <button
+          type="button"
+          class="relative p-0 border-0 bg-gray-200 rounded-lg overflow-hidden aspect-[3/4]"
+          [attr.aria-label]="video.title"
+          (dblclick)="openVideo($index)"
+        >
+          @if (video.photo) {
+          <img
+            [src]="s3Url + '/' + s3Root + '/' + video.photo.name"
+            alt=""
+            loading="lazy"
+            class="w-full h-full object-cover"
+          />
+          }
+          <ion-icon name="play-circle-outline" class="absolute inset-0 m-auto text-white text-[32px]"></ion-icon>
+        </button>
+        }
+      </div>
+
+      <ion-modal [isOpen]="isModalOpen">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-title></ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="setOpen(false)">Close</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding-top">
+            @let index = videoIndex(); @if (index !== null) {
+            <section class="w-full text-center">
+              <app-video-player
+                [video]="actress.videos[index]"
+                [index]="index"
+                [currentIndex]="index"
+                [maxWidth]="maxVideoWidth"
+              >
+              </app-video-player>
+            </section>
+            <section class="ion-padding">
+              <h4>{{ actress.videos[index].title }}</h4>
+              <div class="mb-4">{{ actress.name }}</div>
+              @if (actress.videos[index].description) {
+              <div [innerHTML]="actress.videos[index].description | safe: 'html'"></div>
+              }
+            </section>
+            }
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+    </ion-segment-content>
+  </ion-segment-view>
+  }
 </ion-content>

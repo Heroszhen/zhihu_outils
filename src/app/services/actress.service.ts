@@ -1,6 +1,15 @@
 import { Injectable } from "@angular/core";
 import { BaseService } from "./base.service";
-import { Actress, ActressName, Category, CollectionResponse, Profile, UserRole, Video } from "../models/actress";
+import {
+  Actress,
+  ActressDetail,
+  ActressName,
+  Category,
+  CollectionResponse,
+  Profile,
+  UserRole,
+  Video,
+} from "../models/actress";
 import { Observable } from "rxjs";
 
 @Injectable({
@@ -42,6 +51,10 @@ export class ActressService extends BaseService {
 
   getActressesCountries(): Observable<string[]> {
     return this.http.get<string[]>(this.baseUrl + "/actresses/countries", this.refreshHttpOptions());
+  }
+
+  getActressDetail(actressId: string): Observable<ActressDetail> {
+    return this.http.get<ActressDetail>(this.baseUrl + `/actresses/${actressId}`, this.refreshHttpOptions());
   }
 
   //category

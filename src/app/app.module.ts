@@ -12,6 +12,7 @@ import { DBConfig, NgxIndexedDBModule } from "ngx-indexed-db";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { errorInterceptor } from "./interceptors/error.interceptor";
 import { LoaderComponent } from "./shared/loader/loader.component";
+import { ImagePlayerComponent } from "./shared/image-player/image-player.component";
 
 const dbConfig: DBConfig = {
   name: "www_yangzhen_fr",
@@ -47,6 +48,7 @@ const dbConfig: DBConfig = {
       registrationStrategy: "registerWhenStable:30000",
     }),
     LoaderComponent,
+    ImagePlayerComponent,
   ],
   providers: [
     provideHttpClient(withInterceptors([errorInterceptor])),

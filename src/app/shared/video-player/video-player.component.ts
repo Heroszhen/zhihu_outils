@@ -15,6 +15,7 @@ export class VideoPlayerComponent {
   index = input.required<number>();
   currentIndex = input.required<number | null>();
   iframeRef = viewChild<ElementRef<HTMLIFrameElement>>("iframe");
+  maxWidth = input<number | null>(null);
   protected active = computed(() => this.index() === this.currentIndex());
   private sanitizer = inject(DomSanitizer);
   protected readonly playerUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
@@ -43,7 +44,7 @@ export class VideoPlayerComponent {
           url: this.video().videoUrl,
           type: this.video().videoType,
           height: Math.round(window.innerHeight),
-          maxWidth: Math.round(window.innerWidth),
+          maxWidth: this.maxWidth() ?? Math.round(window.innerWidth - 5),
           needFullHeight: true,
         },
       },

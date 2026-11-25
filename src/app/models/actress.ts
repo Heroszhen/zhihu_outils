@@ -20,6 +20,17 @@ export type Actress = {
   photo: Photo | null;
 };
 
+export type ActressDetail = {
+  id: string;
+  name: string;
+  country: string;
+  birthday: string | null;
+  description: string | null;
+  photo: string | null;
+  images: string[];
+  videos: Video[];
+};
+
 export type Video = {
   id: string;
   title: string;
